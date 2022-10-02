@@ -1,4 +1,5 @@
 # Legendary ODROID M1 Ubuntu 22.04.1 Images
+<img src="https://jamesachambers.com/wp-content/uploads/2022/10/Legendary_ODROID_M1_Images.webp" alt="Legendary ODROID M1 Ubuntu 22.04.1 Images">
 NOTE:  You do not have to build this yourself.  Images are <a href="https://github.com/TheRemote/Legendary-ODROID-M1/releases">available in the Releases section.</a><br>
 <br>
 I made this image because I got tired of installing the server version of Ubuntu and then upgrading it on my M1 to 22.04.1 and then having to install the desktop.  It is currently building 3 different flavors depending on whether the "ubuntu-desktop" or "mate-desktop" packages are installed (or if it is left as the server version after upgrading).<br>
