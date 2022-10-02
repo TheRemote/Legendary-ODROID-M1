@@ -2,7 +2,7 @@
 <img src="https://jamesachambers.com/wp-content/uploads/2022/10/Legendary_ODROID_M1_Images.webp" alt="Legendary ODROID M1 Ubuntu 22.04.1 Images">
 NOTE:  You do not have to build this yourself.  Images are <a href="https://github.com/TheRemote/Legendary-ODROID-M1/releases">available in the Releases section.</a><br>
 <br>
-I made this image because I got tired of installing the server version of Ubuntu and then upgrading it on my M1 to 22.04.1 and then having to install the desktop.  It is currently building 3 different flavors depending on whether the "ubuntu-desktop" or "mate-desktop" packages are installed (or if it is left as the server version after upgrading).<br>
+I made this image because I got tired of installing the server version of Ubuntu and then upgrading it on my M1 to 22.04.1 and then having to install the desktop.  It is currently building 5 different flavors (many of which are not officially available as an image).<br>
 <br>
 This is not using a mainline kernel.  It is using the official ODROID 5.19.x kernel packages from their PPA repository.  It looks like to me they're getting really close to finishing support.  The NPU overlay (rknpu) is not present in the 5.19x branch yet so they aren't quite finished but if you aren't using the NPU it's finished enough.  Since it's using official packages these will update with apt over time so there's a good chance the NPU may fix itself when they add a compatible rknpu overlay to the kernel package.<br>
 <br>
