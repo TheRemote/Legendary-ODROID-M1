@@ -1135,7 +1135,7 @@ function CreateKubuntuIMG() {
 function CreateUpdatedLubuntuIMG() {
     # Build lubuntu-desktop image
     if [ ! -f "${UPDATED_LUBUNTU_IMG}" ]; then
-        echo "Creating updated kubuntu-desktop image ..."
+        echo "Creating updated lubuntu-desktop image ..."
         cp -vf "${UPDATED_IMG}" "${UPDATED_LUBUNTU_IMG}"
 
         # Expands the target image by approximately 2GB to help us not run out of space and encounter errors
