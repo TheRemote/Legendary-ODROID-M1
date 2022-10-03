@@ -17,7 +17,7 @@ echo "Resizing root filesystem -- please wait..." | tee /dev/kmsg
 
 set -x
 
-DEVICE="/dev/mmcblk0"
+DEVICE=$(findmnt -n -o SOURCE --target / | cut -d'p' -f1)
 PART="2"
 
 resize() {
@@ -43,5 +43,8 @@ EOF
 }
 
 resize
+
+# Run update-initramfs
+update-initramfs -u
 
 echo "Done!"
