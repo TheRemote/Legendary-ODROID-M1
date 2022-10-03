@@ -500,6 +500,11 @@ DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt 
 EOF
 
         sudo chroot /mnt /bin/bash <<EOF
+# Purge old 4.x kernels
+DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" purge linux-image-4.* -y
+EOF
+
+        sudo chroot /mnt /bin/bash <<EOF
 # Clean up after ourselves and clean out package cache to keep the image small
 DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" autoremove -y
 EOF
@@ -576,10 +581,6 @@ EOF
     cd "dtbs/$kvers"
     ln -sfv rockchip/rk3568-odroid-m1.dtb rk3568-odroid-m1.dtb
     cd "$olddir"
-
-    # Clone rknpu2 repository
-    #git clone --depth=1 https://github.com/hardkernel/rknpu2.git
-    #sudo cp -rf rknpu2 /mnt/home/odroid
 
     # Enter Ubuntu image chroot
     echo "Entering chroot of IMG file"
