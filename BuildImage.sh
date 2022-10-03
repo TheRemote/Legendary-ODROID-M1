@@ -1195,7 +1195,7 @@ EOF
         sudo mv /mnt/etc/initramfs/post-update.d//flash-kernel /mnt/flash-kernel
 
         sudo chroot /mnt /bin/bash <<EOF
-DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install kubuntu-desktop -y
+DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install lubuntu-desktop -y
 EOF
 
         sudo chroot /mnt /bin/bash <<EOF
