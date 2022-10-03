@@ -22,7 +22,7 @@ If you find any problems (or even better know how to fix them) you can submit th
 
 <h2>Known Issues</h2>
 <ul>
-  <li>NPU overlay is not present is the ODROID 5.19 kernel branch yet so the NPU will not work with this updated image/kernel yet</li>
+  <li>NPU overlay is not present in the ODROID 5.19 kernel branch yet so the NPU will not work with this updated image/kernel yet</li>
 </ul>
 
 <h2>First Startup Instructions</h2>
