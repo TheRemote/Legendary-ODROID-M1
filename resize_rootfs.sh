@@ -13,6 +13,7 @@ if [ "$(id -u)" -ne "0" ]; then
 	exit 1
 fi
 
+echo "Resizing root filesystem -- please wait..."
 echo "Resizing root filesystem -- please wait..." | tee /dev/kmsg
 
 set -x
@@ -45,6 +46,8 @@ EOF
 resize
 
 # Run update-initramfs
+echo "Running update-initramfs..."
+echo "Running update-initramfs..." | tee /dev/kmsg
 update-initramfs -u
 
 echo "Done!"

@@ -2,7 +2,7 @@
 <img src="https://jamesachambers.com/wp-content/uploads/2022/10/Legendary_ODROID_M1_Images.webp" alt="Legendary ODROID M1 Ubuntu 22.04.1 Images">
 NOTE:  You do not have to build this yourself.  Images are <a href="https://github.com/TheRemote/Legendary-ODROID-M1/releases">available in the Releases section.</a><br>
 <br>
-I made this image because I got tired of installing the server version of Ubuntu and then upgrading it on my M1 to 22.04.1 and then having to install the desktop.  It is currently building 5 different flavors (many of which are not officially available as an image).<br>
+I made this image because I got tired of installing the server version of Ubuntu and then upgrading it on my M1 to 22.04.1 and then having to install the desktop.  It is currently building 6 different flavors (many of which are not officially available as an image).<br>
 <br>
 This is not using a mainline kernel.  It is using the official ODROID 5.19.x kernel packages from their PPA repository.  It looks like to me they're getting really close to finishing support.  The NPU overlay (rknpu) is not present in the 5.19x branch yet so they aren't quite finished but if you aren't using the NPU it's finished enough.  Since it's using official packages these will update with apt over time so there's a good chance the NPU may fix itself when they add a compatible rknpu overlay to the kernel package.<br>
 <br>
@@ -18,6 +18,7 @@ If you find any problems (or even better know how to fix them) you can submit th
   <li>Ubuntu 22.04.1 MATE Desktop (ubuntu-mate-desktop)</li>
   <li>Xubuntu 22.04.1 XFCE Desktop (xubuntu-desktop)</li>
   <li>Kubuntu 22.04.1 KDE Desktop (kubuntu-desktop)</li>
+  <li>Lubuntu 22.04.1 LXQt Desktop (lubuntu-desktop)</li>
 </ul>
 
 <h2>Known Issues</h2>
@@ -54,8 +55,15 @@ Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base i
 
 <h2>Update History</h2>
 <ul>
-  <li>October 2nd 2022</li>
+  <li>October 3rd 2022 - V1.1</li>
     <ul>
-        <li>V1.0 - Initial Release</li>
+        <li>Add lubuntu-desktop flavor</li>
+        <li>Purge old 4.x kernels to save image space</li>
+        <li>Run update-initramfs -u on first startup</li>
+        <li>Make resize-rootfs.sh find real root drive so that automatic expansion of rootfs works on SSDs/NVMe/etc.</li>
+    </ul>
+  <li>October 2nd 2022 - V1.0</li>
+    <ul>
+        <li>Initial Release</li>
     </ul>
 </ul>

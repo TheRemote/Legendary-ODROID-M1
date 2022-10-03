@@ -9,7 +9,7 @@
 
 # CONFIGURATION
 
-IMAGE_VERSION="v1.0"
+IMAGE_VERSION="v1.1"
 SOURCE_RELEASE="20.04"
 DEST_RELEASE="22.04.1"
 TARGET_IMG="legendary-ubuntu-${DEST_RELEASE}-server-odroidm1-${IMAGE_VERSION}.img"
@@ -22,13 +22,16 @@ KUBUNTU_DESKTOP_IMG="legendary-kubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_
 KUBUNTU_DESKTOP_IMGXZ="legendary-kubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_VERSION}.img.xz"
 XUBUNTU_DESKTOP_IMG="legendary-xubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_VERSION}.img"
 XUBUNTU_DESKTOP_IMGXZ="legendary-xubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_VERSION}.img.xz"
-SOURCE_IMG="ubuntu-20.04-server-odroidm1-20220531.img"
-SOURCE_IMGXZ="ubuntu-20.04-server-odroidm1-20220531.img.xz"
+LUBUNTU_DESKTOP_IMG="legendary-lubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_VERSION}.img"
+LUBUNTU_DESKTOP_IMGXZ="legendary-lubuntu-${DEST_RELEASE}-desktop-odroidm1-${IMAGE_VERSION}.img.xz"
+SOURCE_IMG="ubuntu-${SOURCE_RELEASE}-server-odroidm1-20220531.img"
+SOURCE_IMGXZ="ubuntu-${SOURCE_RELEASE}-server-odroidm1-20220531.img.xz"
 UPDATED_IMG="ubuntu-${DEST_RELEASE}-server-odroidm1.img"
 UPDATED_DESKTOP_IMG="ubuntu-${DEST_RELEASE}-desktop-odroidm1.img"
 UPDATED_MATE_IMG="ubuntu-${DEST_RELEASE}-mate-desktop-odroidm1.img"
 UPDATED_XUBUNTU_IMG="xubuntu-${DEST_RELEASE}-desktop-odroidm1.img"
 UPDATED_KUBUNTU_IMG="kubuntu-${DEST_RELEASE}-desktop-odroidm1.img"
+UPDATED_LUBUNTU_IMG="lubuntu-${DEST_RELEASE}-desktop-odroidm1.img"
 
 export SLEEP_SHORT="0.2"
 export SLEEP_LONG="1"
@@ -1129,6 +1132,123 @@ function CreateKubuntuIMG() {
     CompactIMG "${KUBUNTU_DESKTOP_IMG}"
 }
 
+function CreateUpdatedLubuntuIMG() {
+    # Build lubuntu-desktop image
+    if [ ! -f "${UPDATED_LUBUNTU_IMG}" ]; then
+        echo "Creating updated kubuntu-desktop image ..."
+        cp -vf "${UPDATED_IMG}" "${UPDATED_LUBUNTU_IMG}"
+
+        # Expands the target image by approximately 2GB to help us not run out of space and encounter errors
+        echo "Expanding desktop image free space ..."
+        truncate -s +6009715200 "${UPDATED_LUBUNTU_IMG}"
+        sync
+        sync
+
+        MountIMG "${UPDATED_LUBUNTU_IMG}"
+
+        # Run fdisk
+        # Get the starting offset of the root partition
+        PART_START=$(sudo parted "/dev/${MOUNT_IMG}" -ms unit s p | grep ":ext4" | cut -f 2 -d: | sed 's/[^0-9]//g')
+        # Perform fdisk to correct the partition table
+        sudo fdisk "/dev/${MOUNT_IMG}" <<EOF
+p
+d
+2
+n
+p
+2
+$PART_START
+
+p
+w
+EOF
+
+        UnmountIMG "${UPDATED_LUBUNTU_IMG}"
+        MountIMG "${UPDATED_LUBUNTU_IMG}"
+
+        # Run e2fsck
+        echo "Running e2fsck"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sync
+        sync
+        sleep "${SLEEP_SHORT}"
+        UnmountIMG "${UPDATED_LUBUNTU_IMG}"
+        MountIMG "${UPDATED_LUBUNTU_IMG}"
+
+        # Run resize2fs
+        echo "Running resize2fs"
+        sudo resize2fs -p "/dev/mapper/${MOUNT_IMG}p2"
+        sync
+        sync
+        sleep "${SLEEP_SHORT}"
+        UnmountIMG "${UPDATED_LUBUNTU_IMG}"
+
+        # Compact image after our file operations
+        CompactIMG "${UPDATED_LUBUNTU_IMG}"
+        MountIMG "${UPDATED_LUBUNTU_IMG}"
+        MountIMGPartitions "${MOUNT_IMG}"
+
+        # Remove flash-kernel hooks
+        echo "Removing flash-kernel hooks"
+        sudo mv /mnt/etc/kernel/postinst.d/zz-flash-kernel /mnt/etc/zz-flash-kernel-postinst
+        sudo mv /mnt/etc/kernel/postrm.d/zz-flash-kernel /mnt/etc/zz-flash-kernel
+        sudo mv /mnt/etc/initramfs/post-update.d//flash-kernel /mnt/flash-kernel
+
+        sudo chroot /mnt /bin/bash <<EOF
+DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install kubuntu-desktop -y
+EOF
+
+        sudo chroot /mnt /bin/bash <<EOF
+DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y
+EOF
+
+        # Restore flash-kernel hooks
+        echo "Restoring flash-kernel hooks"
+        sudo mv /mnt/etc/zz-flash-kernel-postinst /mnt/etc/kernel/postrm.d/zz-flash-kernel
+        sudo mv /mnt/etc/zz-flash-kernel /mnt/etc/kernel/postinst.d/zz-flash-kernel
+        sudo mv /mnt/flash-kernel /mnt/etc/initramfs/post-update.d//flash-kernel
+
+        # Run the after clean function
+        CleanIMG
+
+        # Run fsck on image then unmount and remount
+        UnmountIMGPartitions
+        sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
+        UnmountIMG "${UPDATED_LUBUNTU_IMG}"
+        CompactIMG "${UPDATED_LUBUNTU_IMG}"
+    fi
+}
+
+function CreateLubuntuIMG() {
+    # Build lubuntu-desktop image
+    echo "Creating lubuntu-desktop image ..."
+    if [ -f "${LUBUNTU_DESKTOP_IMG}" ]; then
+        sudo rm -rf "${LUBUNTU_DESKTOP_IMG}"
+    fi
+    cp -vf "${UPDATED_LUBUNTU_IMG}" "${LUBUNTU_DESKTOP_IMG}"
+
+    # Mount image
+    MountIMG "${LUBUNTU_DESKTOP_IMG}"
+    MountIMGPartitions "${MOUNT_IMG}"
+
+    # Modify filesystem
+    ModifyFilesystem
+
+    # Modify desktop filesystem
+    ModifyDesktopFilesystem
+
+    # Run the after clean function
+    CleanIMG
+
+    # Run fsck on image then unmount and remount
+    UnmountIMGPartitions
+    sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
+    UnmountIMG "${LUBUNTU_DESKTOP_IMG}"
+    CompactIMG "${LUBUNTU_DESKTOP_IMG}"
+}
+
 ##################################################################################################################
 
 # Prepare for imaging
@@ -1153,6 +1273,10 @@ ShrinkIMG "${XUBUNTU_DESKTOP_IMG}"
 CreateUpdatedKubuntuIMG
 CreateKubuntuIMG
 ShrinkIMG "${KUBUNTU_DESKTOP_IMG}"
+
+CreateUpdatedLubuntuIMG
+CreateLubuntuIMG
+ShrinkIMG "${LUBUNTU_DESKTOP_IMG}"
 
 # Compress img into xz file
 echo "Compressing final ubuntu-server img.xz file ..."
@@ -1179,5 +1303,10 @@ echo "Compressing final kubuntu-desktop img.xz file ..."
 sudo rm -rf "${KUBUNTU_DESKTOP_IMGXZ}"
 sleep "${SLEEP_SHORT}"
 tar cf "${KUBUNTU_DESKTOP_IMGXZ}" --use-compress-program='xz -T8 -v -9' "${KUBUNTU_DESKTOP_IMG}"
+
+echo "Compressing final lubuntu-desktop img.xz file ..."
+sudo rm -rf "${LUBUNTU_DESKTOP_IMGXZ}"
+sleep "${SLEEP_SHORT}"
+tar cf "${LUBUNTU_DESKTOP_IMGXZ}" --use-compress-program='xz -T8 -v -9' "${LUBUNTU_DESKTOP_IMG}"
 
 echo "Build completed"
