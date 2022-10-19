@@ -55,6 +55,10 @@ Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base i
 
 <h2>Update History</h2>
 <ul>
+  <li>October 18th 2022 - V1.2</li>
+    <ul>
+        <li>Reupload images as some were not mounting properly</li>
+    </ul>
   <li>October 3rd 2022 - V1.1</li>
     <ul>
         <li>Add lubuntu-desktop flavor</li>
