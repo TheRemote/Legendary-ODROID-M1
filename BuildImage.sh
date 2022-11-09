@@ -499,7 +499,7 @@ EOF
 
         sudo chroot /mnt /bin/bash <<EOF
 # Update and install packages
-DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install netplan.io network-manager linux-support-6.0.0-odroid linux-image-6.0.0-odroid usbutils ethtool ufw macchanger man-db locales ifupdown nano libubootenv-tool git bc curl unzip -y
+DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install netplan.io network-manager linux-support-6.0.0-odroid linux-image-6.0.0-odroid-arm64 usbutils ethtool ufw macchanger man-db locales ifupdown nano libubootenv-tool git bc curl unzip -y
 EOF
 
         sudo chroot /mnt /bin/bash <<EOF
