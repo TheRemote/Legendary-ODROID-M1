@@ -391,8 +391,9 @@ function ShrinkIMG() {
     sync
     sync
     sleep "${SLEEP_SHORT}"
-    #UnmountIMG "$1"
-    #MountIMG "$1"
+    UnmountIMG "$1"
+    MountIMG "$1"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
 
     # Run resize2fs
     echo "Running resize2fs"
@@ -524,6 +525,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_IMG}"
         CompactIMG "${UPDATED_IMG}"
@@ -565,6 +567,9 @@ EOF
 
     # Copy new boot.scr
     sudo cp boot.scr /mnt/boot/boot.scr
+
+    # Create forcefsck file for first startup
+    sudo touch /mnt/forcefsck
 
     # Prepare chroot
     sudo cp -f /usr/bin/qemu-aarch64-static /mnt/usr/bin
@@ -654,6 +659,7 @@ function CreateServerIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${TARGET_IMG}"
     CompactIMG "${TARGET_IMG}"
@@ -742,6 +748,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_MATE_IMG}"
         CompactIMG "${UPDATED_MATE_IMG}"
@@ -772,6 +779,7 @@ function CreateMateIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${MATE_DESKTOP_IMG}"
     CompactIMG "${MATE_DESKTOP_IMG}"
@@ -864,6 +872,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_DESKTOP_IMG}"
         CompactIMG "${UPDATED_DESKTOP_IMG}"
@@ -893,6 +902,7 @@ function CreateDesktopIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${DESKTOP_IMG}"
     CompactIMG "${DESKTOP_IMG}"
@@ -981,6 +991,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_XUBUNTU_IMG}"
         CompactIMG "${UPDATED_XUBUNTU_IMG}"
@@ -1011,6 +1022,7 @@ function CreateXubuntuIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${XUBUNTU_DESKTOP_IMG}"
     CompactIMG "${XUBUNTU_DESKTOP_IMG}"
@@ -1099,6 +1111,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_KUBUNTU_IMG}"
         CompactIMG "${UPDATED_KUBUNTU_IMG}"
@@ -1129,6 +1142,7 @@ function CreateKubuntuIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${KUBUNTU_DESKTOP_IMG}"
     CompactIMG "${KUBUNTU_DESKTOP_IMG}"
@@ -1216,6 +1230,7 @@ EOF
         # Run fsck on image then unmount and remount
         UnmountIMGPartitions
         sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+        sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
         sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
         UnmountIMG "${UPDATED_LUBUNTU_IMG}"
         CompactIMG "${UPDATED_LUBUNTU_IMG}"
@@ -1246,6 +1261,7 @@ function CreateLubuntuIMG() {
     # Run fsck on image then unmount and remount
     UnmountIMGPartitions
     sudo fsck.ext4 -yfv "/dev/mapper/${MOUNT_IMG}p2"
+    sudo e2fsck -yfv "/dev/mapper/${MOUNT_IMG}p2"
     sudo fsck.ext2 -yfv "/dev/mapper/${MOUNT_IMG}p1"
     UnmountIMG "${LUBUNTU_DESKTOP_IMG}"
     CompactIMG "${LUBUNTU_DESKTOP_IMG}"

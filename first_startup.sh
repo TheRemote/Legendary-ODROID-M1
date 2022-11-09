@@ -14,7 +14,7 @@ network:
   version: 2
   renderer: NetworkManager
 EOF
-RandomMAC=$(echo 00-60-2f$(hexdump -n3 -e '/1 "-%02X"' /dev/random))
+RandomMAC=$(echo 00:60:2f$(hexdump -n3 -e '/1 ":%02X"' /dev/random))
 sed -i "s/XX:XX:XX:XX:XX:XX/$RandomMAC/g" /etc/netplan/50-cloud-init.yaml
 netplan generate
 netplan --debug apply
