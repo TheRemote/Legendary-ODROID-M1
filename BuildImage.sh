@@ -499,7 +499,7 @@ EOF
 
         sudo chroot /mnt /bin/bash <<EOF
 # Update and install packages
-DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install linux-image-5.19.0-odroid-arm64 ifupdown nano libubootenv-tool git bc curl unzip -y
+DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y && DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install netplan network-manager linux-support-6.0.0-odroid linux-image-6.0.0-odroid lsusb ethtool ufw macchanger man locales ifupdown nano libubootenv-tool git bc curl unzip -y
 EOF
 
         sudo chroot /mnt /bin/bash <<EOF
@@ -570,10 +570,10 @@ EOF
     sudo cp -f /usr/bin/qemu-aarch64-static /mnt/usr/bin
 
     # Fix dtbs and image path
-    initrdpath=$(ls /mnt/boot | grep -m 1 'initrd.img-5.19')
-    vmlinuzpath=$(ls /mnt/boot | grep -m 1 'vmlinuz-5.19')
+    initrdpath=$(ls /mnt/boot | grep -m 1 'initrd.img-6.0')
+    vmlinuzpath=$(ls /mnt/boot | grep -m 1 'vmlinuz-6.0')
     olddir=$(pwd)
-    kvers=$(ls /mnt/boot | grep -m 1 'initrd.img-5.19' | cut -d- -f2-)
+    kvers=$(ls /mnt/boot | grep -m 1 'initrd.img-6.0' | cut -d- -f2-)
     mkdir -p "/mnt/boot/dtbs/$kvers/rockchip/overlays/odroidm1"
     cp -rfv /mnt/usr/lib/linux-image-$kvers/* "/mnt/boot/dtbs/$kvers"
     cd /mnt/boot
@@ -603,14 +603,6 @@ chown -R odroid /home/odroid
 EOF
     echo "The chroot container has exited"
 
-    # Restore flash-kernel hooks
-    echo "Restoring flash-kernel hooks"
-    sudo mv /mnt/etc/zz-flash-kernel-postinst /mnt/etc/kernel/postrm.d/zz-flash-kernel
-    sudo mv /mnt/etc/zz-flash-kernel /mnt/etc/kernel/postinst.d/zz-flash-kernel
-    sudo mv /mnt/flash-kernel /mnt/etc/initramfs/post-update.d//flash-kernel
-}
-
-function ModifyDesktopFilesystem() {
     # First startup helper script
     sudo cp -f first_startup.sh /mnt/usr/sbin/
     sudo chmod +x /mnt/usr/sbin/first_startup.sh
@@ -631,6 +623,16 @@ EOF
     sudo chroot /mnt /bin/bash <<EOF
 systemctl enable first_startup.service
 EOF
+
+    # Restore flash-kernel hooks
+    echo "Restoring flash-kernel hooks"
+    sudo mv /mnt/etc/zz-flash-kernel-postinst /mnt/etc/kernel/postrm.d/zz-flash-kernel
+    sudo mv /mnt/etc/zz-flash-kernel /mnt/etc/kernel/postinst.d/zz-flash-kernel
+    sudo mv /mnt/flash-kernel /mnt/etc/initramfs/post-update.d//flash-kernel
+}
+
+function ModifyDesktopFilesystem() {
+    echo ""
 }
 
 function CreateServerIMG() {

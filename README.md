@@ -26,6 +26,9 @@ If you find any problems (or even better know how to fix them) you can submit th
   <li>NPU overlay is not present in the ODROID 5.19 kernel branch yet so the NPU will not work with this updated image/kernel yet</li>
 </ul>
 
+<h2>Image Instructions</h2>
+The images are in .tar.xz format and should not be written to disk until you decompressed them with tar -xf *.tar.xz.  That will give you a .img file you can write.
+
 <h2>First Startup Instructions</h2>
 Note that the first startup is slow.  This is due to resizing your root filesystem to fit your drive.  After the first startup it will boot much faster but it may take several minutes on a black screen the first startup.  Be patient.  If you see a few lines of text then it is resizing your root filesystem.<br>
 <br>
@@ -55,6 +58,13 @@ Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base i
 
 <h2>Update History</h2>
 <ul>
+  <li>November 9th 2022 - V1.3</li>
+    <ul>
+        <li>Assign permanent randomly generated MAC address at first startup via netplan to prevent MAC changing every reboot</li>
+        <li>Upgrade to ODROID Linux kernel 6.0 branch</li>
+        <li>Add packages: lsusb ethtool ufw macchanger man locales</li>
+    </ul>
+
   <li>October 18th 2022 - V1.2</li>
     <ul>
         <li>Reupload images as some were not mounting properly</li>
