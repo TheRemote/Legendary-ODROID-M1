@@ -44,7 +44,7 @@ Get web browser (desktop only):
 The build system will first download the original ODROID image and update it to 22.04 desktop and server versions.  This makes repeat builds much faster as downloading the updates the first time takes a huge amount of time.  After this your individual changes you're making will be much faster.<br>
 <br>
 If you would like to build the image yourself it is pretty straightforward with the included script.  You will need a few dependencies such as:
-<pre>sudo apt install build-essential guestfs-tools kpartx</pre>
+<pre>sudo apt install build-essential guestfs-tools kpartx qemu-user-static binfmt-support</pre>
 Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base image from ODROID's servers and update it.
 
 <h2>Buy A Coffee / Donate</h2>
@@ -62,9 +62,9 @@ Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base i
     <ul>
         <li>Assign permanent randomly generated MAC address at first startup via netplan to prevent MAC changing every reboot</li>
         <li>Upgrade to ODROID Linux kernel 6.0 branch</li>
-        <li>Add packages: lsusb ethtool ufw macchanger man locales</li>
+        <li>Add packages: usbutils ethtool ufw macchanger man-db locales</li>
+        <li>Update build dependencies</li>
     </ul>
-
   <li>October 18th 2022 - V1.2</li>
     <ul>
         <li>Reupload images as some were not mounting properly</li>
