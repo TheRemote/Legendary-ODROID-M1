@@ -23,14 +23,18 @@ If you find any problems (or even better know how to fix them) you can submit th
 
 <h2>Known Issues</h2>
 <ul>
-  <li>NPU overlay is not present in the ODROID 5.19 kernel branch yet so the NPU will not work with this updated image/kernel yet</li>
+  <li>NPU overlay (rknpu) is not present in the ODROID 6.0.x kernel branch yet so the NPU will not work with this kernel yet</li>
 </ul>
 
 <h2>Image Instructions</h2>
-The images are in .tar.xz format and should not be written to disk until you decompressed them with tar -xf *.tar.xz.  That will give you a .img file you can write.
+The images are in .tar.xz format and should not be written to disk until you decompressed them with: 
+<pre>tar -xf *.tar.xz</pre>
+That will give you a .img file that will boot successfully.  If you are using Windows you can decompress these files with 7zip or WinRAR.
 
 <h2>First Startup Instructions</h2>
 Note that the first startup is slow.  This is due to resizing your root filesystem to fit your drive.  After the first startup it will boot much faster but it may take several minutes on a black screen the first startup.  Be patient.  If you see a few lines of text then it is resizing your root filesystem.<br>
+<br>
+You may also see CRC checksum errors during your first startup.  These are safe to ignore as it will run fsck on the drive the first startup.  When you reboot the device these will be gone.
 <br>
 Set correct timezone:
 <pre>sudo dpkg-reconfigure tzdata</pre>
