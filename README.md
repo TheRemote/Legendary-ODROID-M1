@@ -62,6 +62,10 @@ Now run the build script with sudo ./BuildImage.sh.  It will retrieve the base i
 
 <h2>Update History</h2>
 <ul>
+  <li>March 22nd 2023 - V1.4</li>
+    <ul>
+        <li>Refresh to all the latest packages -- surprisingly there is still no official 22.04 release from ODROID</li>
+    </ul>
   <li>November 9th 2022 - V1.3</li>
     <ul>
         <li>Assign permanent randomly generated MAC address at first startup via netplan to prevent MAC changing every reboot</li>
